@@ -1,9 +1,9 @@
+use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
 use std::fs;
-use std::io::{Write};
+use std::io::Write;
 use std::path::Path;
-use chrono::{DateTime, Utc};
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct LastGood {
@@ -14,7 +14,7 @@ pub struct LastGood {
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct StateEnvelope {
-    pub status: String, // "ok" or "error"
+    pub status: String,            // "ok" or "error"
     pub fetched_at: DateTime<Utc>, // time of last attempt
     pub error: Option<String>,
     pub last_good: Option<LastGood>,
@@ -29,9 +29,8 @@ pub fn load_envelope<P: AsRef<Path>>(path: P) -> Option<StateEnvelope> {
 /// Write an envelope atomically to a file.
 pub fn write_envelope_atomic<P: AsRef<Path>>(
     path: P,
-    envelope: &StateEnvelope
+    envelope: &StateEnvelope,
 ) -> std::io::Result<()> {
-
     let path = path.as_ref();
     let tmp_path = path.with_extension("tmp");
 
@@ -57,7 +56,6 @@ pub fn update_success<P: AsRef<Path>>(
     payload: Value,
     expires: Option<DateTime<Utc>>,
 ) -> std::io::Result<()> {
-
     let now = Utc::now();
 
     let new_last_good = LastGood {
@@ -81,7 +79,6 @@ pub fn update_failure<P: AsRef<Path>>(
     path: P,
     error_message: impl Into<String>,
 ) -> std::io::Result<()> {
-
     let now = Utc::now();
     let old = load_envelope(&path);
 
@@ -94,4 +91,3 @@ pub fn update_failure<P: AsRef<Path>>(
 
     write_envelope_atomic(path, &new_env)
 }
-
