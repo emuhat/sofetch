@@ -87,5 +87,12 @@ fn main() -> io::Result<()> {
         "https://api.zq4.org/allowance/upcoming_payouts",
     )?;
 
+    go_fetch(
+        &args.out_dir.join("dates.json"),
+        true,
+        "https://api.zq4.org/dates",
+    )?;
+
+
     Ok(())
 }
