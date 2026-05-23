@@ -103,5 +103,12 @@ fn main() -> io::Result<()> {
         &format!("{}/dates", api_base),
     )?;
 
+    // Discretionary cleaning passes
+    go_fetch(
+        &args.out_dir.join("passes.json"),
+        true,
+        &format!("{}/passes", api_base),
+    )?;
+
     Ok(())
 }
