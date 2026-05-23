@@ -12,6 +12,10 @@ struct Args {
     /// Directory to write output files
     #[arg(long, value_name = "DIR", default_value = ".")]
     out_dir: PathBuf,
+
+    /// Hit the local dev loofah (http://localhost:3000) instead of prod.
+    #[arg(long)]
+    dev: bool,
 }
 
 fn go_fetch(path: &Path, use_bearer: bool, url: &str) -> io::Result<()> {
@@ -52,6 +56,12 @@ fn go_fetch(path: &Path, use_bearer: bool, url: &str) -> io::Result<()> {
 fn main() -> io::Result<()> {
     let args = Args::parse();
 
+    let api_base = if args.dev {
+        "http://localhost:3000"
+    } else {
+        "https://api.zq4.org"
+    };
+
     // Weather
     go_fetch(
         &args.out_dir.join("weather.json"),
@@ -63,36 +73,35 @@ fn main() -> io::Result<()> {
     go_fetch(
         &args.out_dir.join("cleaning.json"),
         true,
-        "https://api.zq4.org/cleaning",
+        &format!("{}/cleaning", api_base),
     )?;
 
     // Names
     go_fetch(
         &args.out_dir.join("names.json"),
         true,
-        "https://api.zq4.org/people",
+        &format!("{}/people", api_base),
     )?;
 
     // Balances
     go_fetch(
         &args.out_dir.join("balances.json"),
         true,
-        "https://api.zq4.org/allowance/balances",
+        &format!("{}/allowance/balances", api_base),
     )?;
 
     // Upcoming payouts
     go_fetch(
         &args.out_dir.join("upcoming_payouts.json"),
         true,
-        "https://api.zq4.org/allowance/upcoming_payouts",
+        &format!("{}/allowance/upcoming_payouts", api_base),
     )?;
 
     go_fetch(
         &args.out_dir.join("dates.json"),
         true,
-        "https://api.zq4.org/dates",
+        &format!("{}/dates", api_base),
     )?;
-
 
     Ok(())
 }
